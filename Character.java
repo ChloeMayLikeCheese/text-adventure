@@ -5,12 +5,10 @@ public class Character {
     int dex;
     int sta;
     int str;
-    int hp;
-    public Character (int con, int dex ,int sta, int str, int hp){
+    public Character(int con, int dex , int sta, int str){
         this.con = con;
         this.dex = dex;
         this.sta = sta;
         this.str = str;
-        this.hp = hp;
     }
 }
