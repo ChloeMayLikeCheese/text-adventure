@@ -5,8 +5,7 @@ public class Stats {
         Character character;
 
      public Stats(){
-         Character character1;
-         character = new Character(5,5,3,4,100);
-     }
+         character = new Character(5,5,3,4);
 
-}
+     }
+    }
