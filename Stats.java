@@ -5,7 +5,8 @@ public class Stats {
         Character character;
 
      public Stats(){
-         character = new Character(5,5,3,4);
+         int[] debugStats = character.getDebugStats();
+         character = new Character(debugStats[0],debugStats[1],debugStats[2],debugStats[3]);
 
      }
     }
