@@ -117,6 +117,7 @@ public class Main {
     }
 
 
+
     public static void changeHealth(String type, int change) {
         if (type.equalsIgnoreCase("heal")) {
             health += change;
