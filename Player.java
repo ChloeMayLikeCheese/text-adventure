@@ -19,6 +19,7 @@ public class Player {
         this.sta = sta;
         this.str = str;
     }
+
 }
 //    public int[] getRougeStats(){
 //        return new int[]{1,5,3,3};
