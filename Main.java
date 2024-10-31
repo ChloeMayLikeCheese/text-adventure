@@ -98,7 +98,6 @@ public class Main {
 
             newRoom = new Room(isForward ? "You found a coin" : "Returning to the coin room", new Item[]{new Item("Coin")}, false);
         } else {
-            // Trap room, set isTrapActive to true for a new room
             newRoom = new Room(isForward ? "Trap room! Watch out for the spikes!" : "Back in the trap room", new Item[]{}, true);
             if (isForward) changeHealth("damage", 10);
         }
@@ -159,7 +158,7 @@ public class Main {
             if (room.isTrapActive) {
                 System.out.println("Trap room! Watch out for the spikes!");
                 changeHealth("damage", 10);
-                room.isTrapActive = false; // Disable trap after triggering
+                room.isTrapActive = false;
             } else {
                 System.out.println("Returning to previous room: " + room.description + " (Trap is inactive)");
             }

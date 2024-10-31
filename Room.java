@@ -2,7 +2,7 @@ package TextAdventure;
 public class Room {
     Item[] items;
     String description;
-    boolean isTrapActive; // New field to track if the trap is active
+    boolean isTrapActive;
 
     public Room(String description, Item[] items, boolean isTrapActive) {
         this.description = description;
