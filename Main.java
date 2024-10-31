@@ -10,9 +10,6 @@ public class Main {
     public static void main(String[] args) {
         Player player = new Player(0,0,0,0);
         startSequence();
-//        Scanner scanner = new Scanner(System.in);
-//        String input;
-//        roomGenerator();
 
         health = 100+ player.con*10;
         System.out.println("DEBUG: "+" CON:"+ player.con+" DEX:"+ player.dex+" STA:"+ player.sta+" STR:"+ player.str);

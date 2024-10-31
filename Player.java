@@ -5,16 +5,21 @@ public class Player {
     int dex;
     int sta;
     int str;
-    String playerClass;
-    public Player(int con, int dex , int sta, int str){
+
+    public Player(int con, int dex, int sta, int str) {
         this.con = con;
         this.dex = dex;
         this.sta = sta;
         this.str = str;
     }
-    public int[] getTankStats(){
-        return new int[]{5,1,2,4};
+
+    public void setStats(int con, int dex, int sta, int str) {
+        this.con = con;
+        this.dex = dex;
+        this.sta = sta;
+        this.str = str;
     }
+}
 //    public int[] getRougeStats(){
 //        return new int[]{1,5,3,3};
 //    }
