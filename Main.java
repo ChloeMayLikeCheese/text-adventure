@@ -1,36 +1,45 @@
 
 package TextAdventure;
 
-
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     static int health;
-    public static void main(String[] args) {
-        Player player = new Player(0,0,0,0);
-        startSequence();
+    static Player player;
 
-        health = 100+ player.con*10;
-        System.out.println("DEBUG: "+" CON:"+ player.con+" DEX:"+ player.dex+" STA:"+ player.sta+" STR:"+ player.str);
-        System.out.println("Health: "+health);
+    public static void main(String[] args) {
+        player = new Player(0, 0, 0, 0);
+        startSequence(player);
+
+        // Calculate health based on the updated player stats
+        health = 100 + player.con * 10;
+        System.out.println("DEBUG: " + " CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
+        System.out.println("Health: " + health);
     }
-    public static void startSequence(){
-        Player player = new Player(0,0,0,0);
-        player.getTankStats();
+
+    public static void startSequence(Player player) {
         Scanner scanner = new Scanner(System.in);
         String startInput;
+
         System.out.print("Welcome to the Blatant Biohazard Testing Facility!\nClass options: Tank\nPlease choose a class: ");
         startInput = scanner.next();
-        switch (startInput.toLowerCase()){
+
+
+        switch (startInput.toLowerCase()) {
             case "debug":
-                player = new Player(5,5,5,5);
+                player.setStats(5, 5, 5, 5);
                 break;
             case "tank":
-                player = new Player(5,1,2,4);
-
+                player.setStats(5, 1, 2, 4);
+                break;
+            default:
+                System.out.println("Invalid class chosen. Defaulting to tank stats.");
+                player.setStats(5, 1, 2, 4);
+                break;
         }
     }
+}
+
 //    public static void roomGenerator(){
 //        int randomRoom = (int) Math.ceil(Math.random() * 2);
 //        System.out.println("DEBUG Room: "+randomRoom);
@@ -75,5 +84,3 @@ public class Main {
 //            return false;
 //        }
 //    }
-
-    }
