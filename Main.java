@@ -45,6 +45,10 @@ public class Main {
                     player.setStats(1, 5, 4, 2);
                     running = false;
                     break;
+                case "test":
+                    player.setStats(0,0,0,0);
+                    running = false;
+                    break;
                 case "info":
                     System.out.println("Tank: High constitution and strength, but low dexterity and stamina. meant to hit hard and withstand attacks\n" +
                             "Rouge: High dexterity and stamina but low constitution and strength. meant for quick, low damage attacks to chip away at an enemy's health");
@@ -72,10 +76,10 @@ public class Main {
             String command = scanner.nextLine().toLowerCase();
 
             switch (command) {
-                case "move forward":
+                case "move forward","forward","f":
                     moveForward();
                     break;
-                case "move back":
+                case "move back","back","b":
                     moveBackward();
                     break;
                 case "quit":
@@ -83,7 +87,7 @@ public class Main {
                     System.out.println("Thanks for playing!");
                     break;
                 default:
-                    System.out.println("Unknown command. Please type 'move forward', 'move back', or 'quit'.");
+                    System.out.println("Unknown command. Please type 'forward', 'back', or 'quit'.");
                     break;
             }
         }
@@ -96,9 +100,9 @@ public class Main {
 
         if (randomRoom == 1) {
 
-            newRoom = new Room(isForward ? "You found a coin" : "Returning to the coin room", new Item[]{new Item("Coin")}, false);
+            newRoom = new Room(isForward ? "You found a coin" : "Its an empty room.(Already explored)", new Item[]{new Item("Coin")}, false);
         } else {
-            newRoom = new Room(isForward ? "Trap room! Watch out for the spikes!" : "Back in the trap room", new Item[]{}, true);
+            newRoom = new Room(isForward ? "Trap room! Watch out for the spikes!" : "Its an empty room(Already explored)", new Item[]{}, true);
             if (isForward) changeHealth("damage", 10);
         }
 
@@ -130,9 +134,8 @@ public class Main {
 
     public static boolean Dodge() {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
-        System.out.println("Dodge chance: " + dodgeChance);
         if (dodgeChance <= player.dex) {
-            System.out.println("You Dodged the damage successfully!");
+            System.out.println("You Dodged!");
             return true;
         }
         return false;
