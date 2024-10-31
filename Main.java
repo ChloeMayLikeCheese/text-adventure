@@ -63,6 +63,7 @@ public class Main {
                             Sta: For every level of Sta you have, you can attack more and move more without resting
                             Str: For every level of Str you have, you deal a bit more damage""");
                     break;
+
             }
         }
 
@@ -82,7 +83,7 @@ public class Main {
                 case "move back","back","b":
                     moveBackward();
                     break;
-                case "quit":
+                case "quit","q":
                     playing = false;
                     System.out.println("Thanks for playing!");
                     break;
