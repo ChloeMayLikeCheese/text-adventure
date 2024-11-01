@@ -29,11 +29,11 @@ public class Main {
 
         while (running) {
             System.out.println("Type 'help' for instructions on how to play");
-            System.out.print("Welcome to the Blatant Biohazard Research Facility!\nClass options: Tank\nPlease choose a class (or type 'info' for more information on each class): ");
+            System.out.print("Welcome to the Blatant Biohazard Research Facility!\nClass options: Tank, Rouge\nPlease choose a class (or type 'info' for more information on each class): ");
             startInput = scanner.next().toLowerCase();
 
             switch (startInput) {
-                case "debug":
+                case "debug","d":
                     player.setStats(5, 5, 5, 5);
                     running = false;
                     break;
@@ -45,7 +45,7 @@ public class Main {
                     player.setStats(1, 5, 4, 2);
                     running = false;
                     break;
-                case "test":
+                case "test","t":
                     player.setStats(0,0,0,0);
                     running = false;
                     break;
@@ -73,7 +73,7 @@ public class Main {
         boolean playing = true;
         Scanner scanner = new Scanner(System.in);
         while (playing) {
-            System.out.print("Enter command (move forward, move back, quit): ");
+            System.out.print("Enter command (forward,back, quit): ");
             String command = scanner.nextLine().toLowerCase();
 
             switch (command) {
@@ -113,7 +113,7 @@ public class Main {
         } else {
 
             if (newRoom.isTrapActive) {
-                System.out.println("Trap has already been triggered. It's safe now.");
+                System.out.println("Trap has already been triggered.");
                 newRoom.isTrapActive = false;
             }
             System.out.println(newRoom.description);
