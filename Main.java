@@ -1,13 +1,9 @@
 
 package TextAdventure;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
     static int health;
@@ -15,14 +11,14 @@ public class Main {
     static ArrayList<Room> roomList = new ArrayList<>();
     static int currentRoomIndex = -1;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args){
         player = new Player(0, 0, 0, 0);
          //startSequence(player);
 
         health = 100 + player.con * 10;
         System.out.println("DEBUG: " + " CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
-        generateMap();
+
 //        gameLoop();
     }
 
@@ -140,52 +136,6 @@ public class Main {
             return true;
         }
         return false;
-    }
-    public static void generateMap() throws InterruptedException {
-        try {
-            File myObj = new File("map.txt");
-            if (myObj.createNewFile()) {
-                System.out.println("DEBUG: Map created: " + myObj.getName());
-            } else {
-                System.out.println("DEBUG: Map already exists.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        /////////////////////////////////////////////////////
-        TimeUnit.SECONDS.sleep(1);
-        try {
-            FileWriter myWriter = new FileWriter("map.txt");
-            myWriter.write("1234");
-            myWriter.close();
-            System.out.println("DEBUG: Successfully wrote to map");
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        /////////////////////////////////////////////////////
-        TimeUnit.SECONDS.sleep(1);
-        try {
-            File myObj = new File("map.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                System.out.println(data);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        //////////////////////////////////////////////
-        TimeUnit.SECONDS.sleep(1);
-        File myObj = new File("map.txt");
-        if (myObj.delete()) {
-            System.out.println("DEBUG: Deleted the map: " + myObj.getName());
-        } else {
-            System.out.println("DEBUG: Failed to delete the map.");
-        }
     }
 
 
