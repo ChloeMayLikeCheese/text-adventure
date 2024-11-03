@@ -1,8 +1,13 @@
 
 package TextAdventure;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     static int health;
@@ -10,15 +15,15 @@ public class Main {
     static ArrayList<Room> roomList = new ArrayList<>();
     static int currentRoomIndex = -1;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         player = new Player(0, 0, 0, 0);
-        startSequence(player);
+         //startSequence(player);
 
         health = 100 + player.con * 10;
         System.out.println("DEBUG: " + " CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
-
-        gameLoop();
+        generateMap();
+//        gameLoop();
     }
 
     public static void startSequence(Player player) {
@@ -68,30 +73,30 @@ public class Main {
 
     }
 
-    public static void gameLoop() {
-        boolean playing = true;
-        Scanner scanner = new Scanner(System.in);
-        while (playing) {
-            System.out.print("Enter command (forward,back, quit): ");
-            String command = scanner.nextLine().toLowerCase();
-
-            switch (command) {
-                case "move forward","forward","f":
-                    moveForward();
-                    break;
-                case "move back","back","b":
-                    moveBackward();
-                    break;
-                case "quit","q":
-                    playing = false;
-                    System.out.println("Thanks for playing!");
-                    break;
-                default:
-                    System.out.println("Unknown command. Please type 'forward', 'back', or 'quit'.");
-                    break;
-            }
-        }
-    }
+//    public static void gameLoop() {
+//        boolean playing = true;
+//        Scanner scanner = new Scanner(System.in);
+//        while (playing) {
+//            System.out.print("Enter command (forward,back, quit): ");
+//            String command = scanner.nextLine().toLowerCase();
+//
+//            switch (command) {
+//                case "move forward","forward","f":
+//
+//                    break;
+//                case "move back","back","b":
+//
+//                    break;
+//                case "quit","q":
+//                    playing = false;
+//                    System.out.println("Thanks for playing!");
+//                    break;
+//                default:
+//                    System.out.println("Unknown command. Please type 'forward', 'back', or 'quit'.");
+//                    break;
+//            }
+//        }
+//    }
 
 
     public static void roomGenerator() {
@@ -121,14 +126,14 @@ public class Main {
         if (type.equalsIgnoreCase("heal")) {
             health += change;
         } else if (type.equalsIgnoreCase("damage")) {
-            if (!Dodge()) {
+            if (!dodge()) {
                 health -= change;
                 System.out.println("You took " + change + " damage!\nHealth: " + health);
             }
         }
     }
 
-    public static boolean Dodge() {
+    public static boolean dodge() {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
         if (dodgeChance <= player.dex) {
             System.out.println("You Dodged!");
@@ -136,35 +141,81 @@ public class Main {
         }
         return false;
     }
-
-
-    public static void moveForward() {
-        if (currentRoomIndex < roomList.size() - 1) {
-            currentRoomIndex++;
-            System.out.println(roomList.get(currentRoomIndex).description);
-        } else {
-            roomGenerator();
-            System.out.println(roomList.get(currentRoomIndex).description);
-        }
-    }
-
-
-    public static void moveBackward() {
-        if (currentRoomIndex > 0) {
-            currentRoomIndex--;
-            Room room = roomList.get(currentRoomIndex);
-
-
-            if (room.isTrapActive) {
-                System.out.println("Trap room! Watch out for the spikes!");
-                changeHealth("damage", 10);
-                room.isTrapActive = false;
+    public static void generateMap() throws InterruptedException {
+        try {
+            File myObj = new File("map.txt");
+            if (myObj.createNewFile()) {
+                System.out.println("DEBUG: Map created: " + myObj.getName());
             } else {
-                System.out.println("Returning to previous room: " + room.description + " (Trap is inactive)");
+                System.out.println("DEBUG: Map already exists.");
             }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        /////////////////////////////////////////////////////
+        TimeUnit.SECONDS.sleep(1);
+        try {
+            FileWriter myWriter = new FileWriter("map.txt");
+            myWriter.write("1234");
+            myWriter.close();
+            System.out.println("DEBUG: Successfully wrote to map");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        /////////////////////////////////////////////////////
+        TimeUnit.SECONDS.sleep(1);
+        try {
+            File myObj = new File("map.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        //////////////////////////////////////////////
+        TimeUnit.SECONDS.sleep(1);
+        File myObj = new File("map.txt");
+        if (myObj.delete()) {
+            System.out.println("DEBUG: Deleted the map: " + myObj.getName());
         } else {
-            System.out.println("You are at the start and cannot go back further.");
+            System.out.println("DEBUG: Failed to delete the map.");
         }
     }
+
+
+//    public static void moveForward() {
+//        if (currentRoomIndex < roomList.size() - 1) {
+//            currentRoomIndex++;
+//            System.out.println(roomList.get(currentRoomIndex).description);
+//        } else {
+//            roomGenerator();
+//            System.out.println(roomList.get(currentRoomIndex).description);
+//        }
+//    }
+//
+//
+//    public static void moveBackward() {
+//        if (currentRoomIndex > 0) {
+//            currentRoomIndex--;
+//            Room room = roomList.get(currentRoomIndex);
+//
+//
+//            if (room.isTrapActive) {
+//                System.out.println("Trap room! Watch out for the spikes!");
+//                changeHealth("damage", 10);
+//                room.isTrapActive = false;
+//            } else {
+//                System.out.println("Returning to previous room: " + room.description + " (Trap is inactive)");
+//            }
+//        } else {
+//            System.out.println("You are at the start and cannot go back further.");
+//        }
+//    }
 }
 
