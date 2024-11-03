@@ -137,6 +137,7 @@ public class Main {
         return false;
     }
 
+
     public static void moveForward() {
         if (currentRoomIndex < roomList.size() - 1) {
             currentRoomIndex++;
