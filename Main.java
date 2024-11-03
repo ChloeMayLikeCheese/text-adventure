@@ -18,7 +18,6 @@ public class Main {
         System.out.println("DEBUG: " + " CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
 
-        roomGenerator(true);
         gameLoop();
     }
 
@@ -95,29 +94,25 @@ public class Main {
     }
 
 
-    public static void roomGenerator(boolean isForward) {
+    public static void roomGenerator() {
         int randomRoom = (int) Math.ceil(Math.random() * 2);
         Room newRoom;
 
         if (randomRoom == 1) {
 
-            newRoom = new Room(isForward ? "You found a coin" : "Its an empty room.(Already explored)", new Item[]{new Item("Coin")}, false);
+            newRoom = new Room(  "You found a coin", new Item[]{new Item("Coin")}, false);
         } else {
-            newRoom = new Room(isForward ? "Trap room! Watch out for the spikes!" : "Its an empty room(Already explored)", new Item[]{}, true);
-            if (isForward) changeHealth("damage", 10);
+            newRoom = new Room(  "Trap room! Watch out for the spikes!", new Item[]{}, true);
+           changeHealth("damage", 10);
         }
 
-        if (isForward) {
+
             roomList.add(newRoom);
             currentRoomIndex++;
-        } else {
 
-            if (newRoom.isTrapActive) {
-                System.out.println("Trap has already been triggered.");
-                newRoom.isTrapActive = false;
-            }
+
             System.out.println(newRoom.description);
-        }
+
     }
 
 
@@ -147,7 +142,7 @@ public class Main {
             currentRoomIndex++;
             System.out.println(roomList.get(currentRoomIndex).description);
         } else {
-            roomGenerator(true);
+            roomGenerator();
             System.out.println(roomList.get(currentRoomIndex).description);
         }
     }
