@@ -1,133 +1,161 @@
-
 package TextAdventure;
 
-
-import java.util.ArrayList;
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
     static int health;
     static Player player;
-    static ArrayList<Room> roomList = new ArrayList<>();
-    static int currentRoomIndex = -1;
+    static Room[] rooms = new Room[10];
+    static int currentRoomIndex = 0;
+    static int roomCount = 0;
+    static final String ROOM_FILE = "rooms.txt";
+    static final String START_ROOM_DESCRIPTION = "Welcome to the Blatant Biohazard Research Facility! Type 'help' for instructions.";
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         player = new Player(0, 0, 0, 0);
-         //startSequence(player);
-
         health = 100 + player.con * 10;
         System.out.println("DEBUG: " + " CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
 
-//        gameLoop();
+
+        rooms[0] = new Room(START_ROOM_DESCRIPTION, new Item[]{}, false);
+        roomCount = 1;
+
+
+        gameLoop();
     }
 
-    public static void startSequence(Player player) {
+    public static void gameLoop() {
+        boolean playing = true;
         Scanner scanner = new Scanner(System.in);
-        String startInput;
-        boolean running = true;
+        while (playing) {
 
-        while (running) {
-            System.out.println("Type 'help' for instructions on how to play");
-            System.out.print("Welcome to the Blatant Biohazard Research Facility!\nClass options: Tank, Rouge\nPlease choose a class (or type 'info' for more information on each class): ");
-            startInput = scanner.next().toLowerCase();
+            Room currentRoom = rooms[currentRoomIndex];
+            System.out.println(currentRoom.description);
+            System.out.print("Enter command (forward, back, quit): ");
+            String command = scanner.nextLine().toLowerCase();
 
-            switch (startInput) {
-                case "debug","d":
-                    player.setStats(5, 5, 5, 5);
-                    running = false;
-                    break;
-                case "tank":
-                    player.setStats(5, 1, 2, 4);
-                    running = false;
-                    break;
-                case "rouge":
-                    player.setStats(1, 5, 4, 2);
-                    running = false;
-                    break;
-                case "test","t":
-                    player.setStats(0,0,0,0);
-                    running = false;
-                    break;
-                case "info":
-                    System.out.println("Tank: High constitution and strength, but low dexterity and stamina. meant to hit hard and withstand attacks\n" +
-                            "Rouge: High dexterity and stamina but low constitution and strength. meant for quick, low damage attacks to chip away at an enemy's health");
-                    break;
-                case "help":
+            switch (command) {
+                case "move forward", "forward", "f" -> moveForward();
+                case "move back", "back", "b" -> moveBackward();
+                case "quit", "q" -> {
+                    playing = false;
+                    System.out.println("Thanks for playing!");
+                    clearRoomsFile();
+                }
+                case "help" -> {
                     System.out.println("""
                             How to play:
-                            Stats: Stats determine things that happen in the game, like your constitution, which determines how much health you have
-                            Here is what they all mean:
-                            Con: For every level of Con you have, you get ten more health
-                            Dex: For every level of Dex you have, you have a higher chance of dodging certain attacks
-                            Sta: For every level of Sta you have, you can attack more and move more without resting
-                            Str: For every level of Str you have, you deal a bit more damage""");
-                    break;
-
+                            Stats: Stats determine things that happen in the game, like your constitution, which determines how much health you have.
+                            Con: For every level of Con, you get ten more health.
+                            Dex: For every level of Dex, you have a higher chance of dodging attacks.
+                            Sta: For every level of Sta, you can act more without resting.
+                            Str: For every level of Str, you deal a bit more damage.""");
+                }
+                default -> System.out.println("Unknown command. Please type 'forward', 'back', or 'quit'.");
             }
         }
-
     }
 
-//    public static void gameLoop() {
-//        boolean playing = true;
-//        Scanner scanner = new Scanner(System.in);
-//        while (playing) {
-//            System.out.print("Enter command (forward,back, quit): ");
-//            String command = scanner.nextLine().toLowerCase();
-//
-//            switch (command) {
-//                case "move forward","forward","f":
-//
-//                    break;
-//                case "move back","back","b":
-//
-//                    break;
-//                case "quit","q":
-//                    playing = false;
-//                    System.out.println("Thanks for playing!");
-//                    break;
-//                default:
-//                    System.out.println("Unknown command. Please type 'forward', 'back', or 'quit'.");
-//                    break;
-//            }
-//        }
-//    }
 
 
-    public static void roomGenerator() {
-        int randomRoom = (int) Math.ceil(Math.random() * 2);
-        Room newRoom;
-
-        if (randomRoom == 1) {
-
-            newRoom = new Room(  "You found a coin", new Item[]{new Item("Coin")}, false);
-        } else {
-            newRoom = new Room(  "Trap room! Watch out for the spikes!", new Item[]{}, true);
-           changeHealth("damage", 10);
+    public static void moveForward() {
+        if (roomCount == 0) {
+            System.out.println("No rooms available to move forward.");
+            return;
         }
 
-
-            roomList.add(newRoom);
+        if (currentRoomIndex < roomCount - 1) {
             currentRoomIndex++;
+        } else {
+            roomGenerator();
+        }
 
-
-            System.out.println(newRoom.description);
-
+        Room currentRoom = rooms[currentRoomIndex % 10];
+        System.out.println(currentRoom.description);
+        if (currentRoom.isTrapActive) {
+            handleTrap(currentRoom);
+        }
     }
 
+    public static void moveBackward() {
+        if (roomCount == 0) {
+            System.out.println("No rooms available to move back.");
+            return;
+        }
 
+        if (currentRoomIndex > 0) {
+            currentRoomIndex--;
+            Room room = rooms[currentRoomIndex % 10];
+
+            System.out.println("Returning to previous room: " + room.description);
+            if (room.isTrapActive) {
+                handleTrap(room);
+            }
+        } else {
+            System.out.println("You are at the start and cannot go back further.");
+        }
+    }
+    public static void generateNewRoomBatch() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ROOM_FILE, true))) {
+            for (int i = 0; i < 10; i++) {
+                Room newRoom = Math.random() < 0.5 ? new Room("You found a coin", new Item[]{new Item("Coin")}, false)
+                        : new Room("", new Item[]{}, true);
+                rooms[i] = newRoom;
+                writer.write(newRoom.description + "," + newRoom.isTrapActive);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing rooms to file: " + e.getMessage());
+        }
+        roomCount += 10;
+    }
+    public static void handleTrap(Room room) {
+        if (room.isTrapActive) {
+            System.out.println("Trap room! Watch out for the spikes!");
+            if (!dodge()) {
+                changeHealth("damage", 10);
+            }
+            room.isTrapActive = false;
+        }
+    }
+
+    public static void loadRoomsFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ROOM_FILE))) {
+            String line;
+            roomCount = 0;
+            while ((line = reader.readLine()) != null && roomCount < rooms.length) {
+                String[] parts = line.split(",");
+                String description = parts[0];
+                boolean isTrapActive = Boolean.parseBoolean(parts[1]);
+                rooms[roomCount] = new Room(description, new Item[]{}, isTrapActive);
+                roomCount++;
+            }
+        } catch (IOException e) {
+            System.out.println("No saved rooms found.");
+        }
+    }
+
+    public static void clearRoomsFile() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(ROOM_FILE))) {
+            writer.print("");
+        } catch (IOException e) {
+            System.out.println("Error clearing rooms file: " + e.getMessage());
+        }
+    }
 
     public static void changeHealth(String type, int change) {
         if (type.equalsIgnoreCase("heal")) {
             health += change;
+            System.out.println("You healed " + change + " health!\nHealth: " + health);
         } else if (type.equalsIgnoreCase("damage")) {
-            if (!dodge()) {
-                health -= change;
-                System.out.println("You took " + change + " damage!\nHealth: " + health);
-            }
+            health -= change;
+            System.out.println("You took " + change + " damage!\nHealth: " + health);
         }
     }
+
+
 
     public static boolean dodge() {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
@@ -137,35 +165,18 @@ public class Main {
         }
         return false;
     }
+    public static void roomGenerator() {
+        int randomRoom = (int) Math.ceil(Math.random() * 2);
+        Room newRoom;
 
+        if (randomRoom == 1) {
+            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")}, false);
+        } else {
+            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{}, true);
+        }
 
-//    public static void moveForward() {
-//        if (currentRoomIndex < roomList.size() - 1) {
-//            currentRoomIndex++;
-//            System.out.println(roomList.get(currentRoomIndex).description);
-//        } else {
-//            roomGenerator();
-//            System.out.println(roomList.get(currentRoomIndex).description);
-//        }
-//    }
-//
-//
-//    public static void moveBackward() {
-//        if (currentRoomIndex > 0) {
-//            currentRoomIndex--;
-//            Room room = roomList.get(currentRoomIndex);
-//
-//
-//            if (room.isTrapActive) {
-//                System.out.println("Trap room! Watch out for the spikes!");
-//                changeHealth("damage", 10);
-//                room.isTrapActive = false;
-//            } else {
-//                System.out.println("Returning to previous room: " + room.description + " (Trap is inactive)");
-//            }
-//        } else {
-//            System.out.println("You are at the start and cannot go back further.");
-//        }
-//    }
+        rooms[roomCount % 10] = newRoom;
+        roomCount++;
+        System.out.println(newRoom.description);
+    }
 }
-
