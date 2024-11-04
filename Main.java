@@ -12,7 +12,6 @@ public class Main {
     public static void main(String[] args) {
         saveCreate();
         saveWrite();
-        saveWrite();
         player = new Player(0, 0, 0, 0);
         startSequence();
         health = 100 + player.con * 10;
@@ -77,8 +76,10 @@ public class Main {
                         saveDelete();
                         System.exit(0);
                     }else{
+                        saveWrite();
                         System.out.println("Saved");
                         System.exit(0);
+
                     }
 
                    break;
@@ -91,6 +92,7 @@ public class Main {
         if (type.equalsIgnoreCase("heal")) {
             health += change;
             System.out.println("You healed " + change + " health!\nHealth: " + health);
+            saveWrite();
         } else if (type.equalsIgnoreCase("damage")) {
             dodge();
             health -= change;
@@ -145,7 +147,7 @@ public class Main {
     public static void saveWrite(){
         try {
             FileWriter saveWriter = new FileWriter("save.txt");
-            saveWriter.write("health="+health+"stamina="+stamina);
+            saveWriter.write("health="+health+"stamina="+stamina+"\n");
             saveWriter.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");
