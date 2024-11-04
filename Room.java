@@ -3,7 +3,8 @@ public class Room {
     Item[] items;
     String description;
 
-    public Room(String description, Item[] items, boolean isTrapActive) {
+
+    public Room(String description, Item[] items) {
         this.description = description;
         this.items = items;
 
@@ -11,7 +12,7 @@ public class Room {
 
     @Override
     public String toString() {
-        return description;
+        return description ;
     }
 }
 

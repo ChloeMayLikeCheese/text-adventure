@@ -1,6 +1,7 @@
 package TextAdventure;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -18,6 +19,7 @@ public class Main {
         health = 100 + player.con * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
+        roomGenerator();
 
 
     }
@@ -51,6 +53,10 @@ public class Main {
                     System.out.println("Tank: High constitution and strength, but low dexterity and stamina. Meant to hit hard and withstand attacks\n" +
                             "Rogue: High dexterity and stamina but low constitution and strength. Meant for quick, low damage attacks to chip away at an enemy's health.");
                     break;
+                case "t":
+                    player.setStats(0,0,0,0);
+                    running = false;
+                    break;
                 case "help" :
                     System.out.println("""
                         How to play:
@@ -65,21 +71,12 @@ public class Main {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
     public static void changeHealth(String type, int change) {
         if (type.equalsIgnoreCase("heal")) {
             health += change;
             System.out.println("You healed " + change + " health!\nHealth: " + health);
         } else if (type.equalsIgnoreCase("damage")) {
+            dodge();
             health -= change;
             System.out.println("You took " + change + " damage!\nHealth: " + health);
         }
@@ -98,11 +95,13 @@ public class Main {
     public static void roomGenerator() {
         int randomRoom = (int) Math.ceil(Math.random() * 2);
         Room newRoom;
-
         if (randomRoom == 1) {
-            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")}, false);
+            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")});
+            System.out.println(newRoom.description+" Items: "+ Arrays.toString(newRoom.items));
         } else {
-            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{}, true);
+            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{});
+            System.out.println(newRoom.description);
+            changeHealth("damage",10);
         }
     }
 }
