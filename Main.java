@@ -14,23 +14,66 @@ public class Main {
 
     public static void main(String[] args) {
         player = new Player(0, 0, 0, 0);
+
+        // Start sequence for class selection
+        startSequence();
+
+        // Now that class is selected, calculate and display health and debug information
         health = 100 + player.con * 10;
-        System.out.println("DEBUG: " + " CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
+        System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
 
-
+        // Initialize the starting room
         rooms[0] = new Room(START_ROOM_DESCRIPTION, new Item[]{}, false);
         roomCount = 1;
 
-
         gameLoop();
+    }
+
+    public static void startSequence() {
+        Scanner scanner = new Scanner(System.in);
+        String startInput;
+        boolean running = true;
+
+        while (running) {
+            System.out.print("Class options: Tank, Rogue\nPlease choose a class (or type 'info' for more information on each class): ");
+            startInput = scanner.next().toLowerCase();
+
+            switch (startInput) {
+                case "debug", "d" -> {
+                    player.setStats(5, 5, 5, 5);
+                    running = false;
+                }
+                case "tank" -> {
+                    player.setStats(5, 1, 2, 4);
+                    running = false;
+                }
+                case "rogue" -> {
+                    player.setStats(1, 5, 4, 2);
+                    running = false;
+                }
+                case "info" -> {
+                    System.out.println("Tank: High constitution and strength, but low dexterity and stamina. Meant to hit hard and withstand attacks\n" +
+                            "Rogue: High dexterity and stamina but low constitution and strength. Meant for quick, low damage attacks to chip away at an enemy's health.");
+                }
+                case "help" -> {
+                    System.out.println("""
+                        How to play:
+                        Stats determine things that happen in the game.
+                        Con: More health per level.
+                        Dex: Higher dodge chance.
+                        Sta: More actions without resting.
+                        Str: Higher damage per level.""");
+                }
+                default -> System.out.println("Invalid input. Type 'tank' or 'rogue' to select a class.");
+            }
+        }
     }
 
     public static void gameLoop() {
         boolean playing = true;
         Scanner scanner = new Scanner(System.in);
         while (playing) {
-
             Room currentRoom = rooms[currentRoomIndex];
             System.out.println(currentRoom.description);
             System.out.print("Enter command (forward, back, quit): ");
@@ -47,18 +90,15 @@ public class Main {
                 case "help" -> {
                     System.out.println("""
                             How to play:
-                            Stats: Stats determine things that happen in the game, like your constitution, which determines how much health you have.
-                            Con: For every level of Con, you get ten more health.
-                            Dex: For every level of Dex, you have a higher chance of dodging attacks.
-                            Sta: For every level of Sta, you can act more without resting.
-                            Str: For every level of Str, you deal a bit more damage.""");
+                            Con: More health per level.
+                            Dex: Higher dodge chance.
+                            Sta: More actions without resting.
+                            Str: Higher damage per level.""");
                 }
                 default -> System.out.println("Unknown command. Please type 'forward', 'back', or 'quit'.");
             }
         }
     }
-
-
 
     public static void moveForward() {
         if (roomCount == 0) {
@@ -97,7 +137,11 @@ public class Main {
             System.out.println("You are at the start and cannot go back further.");
         }
     }
-    public static void generateNewRoomBatch() {
+
+    // ... (rest of the methods remain unchanged) ...
+
+
+public static void generateNewRoomBatch() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ROOM_FILE, true))) {
             for (int i = 0; i < 10; i++) {
                 Room newRoom = Math.random() < 0.5 ? new Room("You found a coin", new Item[]{new Item("Coin")}, false)
