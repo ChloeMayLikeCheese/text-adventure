@@ -2,21 +2,21 @@ package TextAdventure;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     static int health;
     static Player player;
-    static final String START_ROOM_DESCRIPTION = "Welcome to the Blatant Biohazard Research Facility! Type 'help' for instructions.";
-
+    static int stamina;
     public static void main(String[] args) {
+        saveCreate();
+        saveWrite();
+        saveWrite();
         player = new Player(0, 0, 0, 0);
-
-
         startSequence();
-
-
         health = 100 + player.con * 10;
+        stamina = 100 + player.sta * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
         roomGenerator();
@@ -66,6 +66,22 @@ public class Main {
                         Sta: More actions without resting.
                         Str: Higher damage per level.""");
                     break;
+                case "r","read":
+                    saveRead();
+                    break;
+                case "q","quit":
+                    System.out.print("Save? y/n: ");
+                    String yesno = scanner.next();
+                    if (Objects.equals(yesno, "n")){
+                        System.out.println("Quitting without saving...");
+                        saveDelete();
+                        System.exit(0);
+                    }else{
+                        System.out.println("Saved");
+                        System.exit(0);
+                    }
+
+                   break;
 
                 default : System.out.println("Invalid input. Type 'tank' or 'rogue' to select a class.");
             }
@@ -79,6 +95,7 @@ public class Main {
             dodge();
             health -= change;
             System.out.println("You took " + change + " damage!\nHealth: " + health);
+            saveWrite();
         }
     }
 
@@ -102,6 +119,52 @@ public class Main {
             newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{});
             System.out.println(newRoom.description);
             changeHealth("damage",10);
+        }
+    }
+    public static void saveDelete(){
+        File saveDelete = new File("save.txt");
+        if (saveDelete.delete()) {
+            System.out.println("DEBUG: Deleted the save file: " + saveDelete.getName());
+        } else {
+            System.out.println("DEBUG: Failed to delete the save file.");
+        }
+    }
+    public static void saveCreate(){
+        try {
+            File saveCreator = new File("save.txt");
+            if (saveCreator.createNewFile()) {
+                System.out.println("DEBUG: Save created: " + saveCreator.getName());
+            } else {
+                System.out.println("DEBUG: Save already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("DEBUG: An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    public static void saveWrite(){
+        try {
+            FileWriter saveWriter = new FileWriter("save.txt");
+            saveWriter.write("health="+health+"stamina="+stamina);
+            saveWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveRead(){
+        try {
+            File saveReader = new File("save.txt");
+            Scanner myReader = new Scanner(saveReader);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("DEBUG: An error occurred.");
+            e.printStackTrace();
         }
     }
 }
