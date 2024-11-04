@@ -21,11 +21,5 @@ public class Player {
     }
 
 }
-//    public int[] getRougeStats(){
-//        return new int[]{1,5,3,3};
-//    }
-//    public int[] getDebugStats(){
-//        return new int[]{5,5,5,5};
-//    }
 
 
