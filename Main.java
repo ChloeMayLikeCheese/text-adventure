@@ -74,7 +74,7 @@ public class Main {
                         Commands:
                         Forward or f, moves you forward one room
                         Back or b, moves you back one room
-                        Quit of q, quits the program""");
+                        Quit or q, quits the program""");
                     break;
                 case "r","read":
                     saveRead();
