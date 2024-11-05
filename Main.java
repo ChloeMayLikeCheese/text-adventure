@@ -104,13 +104,11 @@ public class Main {
 
 
 
-    public static boolean dodge() {
+    public static void dodge() {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
         if (dodgeChance <= player.dex) {
             System.out.println("You Dodged!");
-            return true;
         }
-        return false;
     }
     public static void roomGenerator() {
         int randomRoom = (int) Math.ceil(Math.random() * 2);
@@ -175,7 +173,7 @@ public static void saveWrite() {
     String newData = "health=" + health + " stamina=" + stamina;
 
 
-    if (content.length() > 0) {
+    if (!content.isEmpty()) {
 
         content.setLength(content.length() - 1);
         content.append(" ").append(newData);
@@ -187,7 +185,7 @@ public static void saveWrite() {
 
     try (FileWriter saveWriter = new FileWriter(filePath)) {
         saveWriter.write(content.toString());
-        saveWriter.write("\n"); // Add a newline at the end of the file
+        saveWriter.write("\n");
     } catch (IOException e) {
         System.out.println("An error occurred while writing to the file.");
         e.printStackTrace();
