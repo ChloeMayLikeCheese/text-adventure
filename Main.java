@@ -1,15 +1,15 @@
 package TextAdventure;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.*;
 
 public class Main {
     static int health;
     static Player player;
     static int stamina;
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         saveCreate();
         saveWrite();
         player = new Player(0, 0, 0, 0);
@@ -23,7 +23,7 @@ public class Main {
 
     }
 
-    public static void startSequence() {
+    public static void startSequence() throws IOException {
         Scanner scanner = new Scanner(System.in);
         String startInput;
         boolean running = true;
@@ -77,6 +77,7 @@ public class Main {
                         System.exit(0);
                     }else{
                         saveWrite();
+                        roomsList();
                         System.out.println("Saved");
                         System.exit(0);
 
@@ -144,16 +145,54 @@ public class Main {
             e.printStackTrace();
         }
     }
-    public static void saveWrite(){
-        try {
-            FileWriter saveWriter = new FileWriter("save.txt");
-            saveWriter.write("health="+health+"stamina="+stamina+"\n");
-            saveWriter.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+//    public static void saveWrite(){
+//        try {
+//            FileWriter saveWriter = new FileWriter("save.txt");
+//            saveWriter.write("health="+health+"stamina="+stamina+"\n");
+//            saveWriter.close();
+//        } catch (IOException e) {
+//            System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
+//    }
+public static void saveWrite() {
+    String filePath = "save.txt";
+    StringBuilder content = new StringBuilder();
+
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            content.append(line).append("\n");
         }
+    } catch (IOException e) {
+        System.out.println("An error occurred while reading the file.");
+        e.printStackTrace();
     }
+
+
+    String newData = "health=" + health + " stamina=" + stamina;
+
+
+    if (content.length() > 0) {
+
+        content.setLength(content.length() - 1);
+        content.append(" ").append(newData);
+    } else {
+
+        content.append(newData);
+    }
+
+
+    try (FileWriter saveWriter = new FileWriter(filePath)) {
+        saveWriter.write(content.toString());
+        saveWriter.write("\n"); // Add a newline at the end of the file
+    } catch (IOException e) {
+        System.out.println("An error occurred while writing to the file.");
+        e.printStackTrace();
+    }
+}
 
     public static void saveRead(){
         try {
@@ -168,5 +207,17 @@ public class Main {
             System.out.println("DEBUG: An error occurred.");
             e.printStackTrace();
         }
+    }
+    public static void roomsList() throws IOException {
+        List<String> list = Files.readAllLines(new File("save.txt").toPath(), Charset.defaultCharset() );
+
+        System.out.println(list);
+//        Scanner in = new Scanner(new File("save.txt"));
+//        ArrayList<String> list = new ArrayList<String>();
+//        while (in.hasNext()){
+//            list.add(in.next());
+//        }
+//        in.close();
+
     }
 }
