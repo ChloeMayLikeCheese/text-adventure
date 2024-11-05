@@ -9,16 +9,23 @@ public class Main {
     static int health;
     static Player player;
     static int stamina;
+    static int currentRoomIndex = 1;
+    static String currentRoom;
     public static void main(String[] args) throws IOException {
         saveCreate();
-        saveWrite();
+
         player = new Player(0, 0, 0, 0);
         startSequence();
         health = 100 + player.con * 10;
         stamina = 100 + player.sta * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
-        roomGenerator();
+        for (int i = 0; i < 5; i++) {
+            roomGenerator();
+        }
+        saveRead();
+        saveDelete();
+
 
 
     }
@@ -63,7 +70,11 @@ public class Main {
                         Con: More health per level.
                         Dex: Higher dodge chance.
                         Sta: More actions without resting.
-                        Str: Higher damage per level.""");
+                        Str: Higher damage per level.
+                        Commands:
+                        Forward or f, moves you forward one room
+                        Back or b, moves you back one room
+                        Quit of q, quits the program""");
                     break;
                 case "r","read":
                     saveRead();
@@ -77,7 +88,7 @@ public class Main {
                         System.exit(0);
                     }else{
                         saveWrite();
-                        roomsList();
+                        saveRead();
                         System.out.println("Saved");
                         System.exit(0);
 
@@ -116,10 +127,16 @@ public class Main {
         if (randomRoom == 1) {
             newRoom = new Room("You found a coin", new Item[]{new Item("Coin")});
             System.out.println(newRoom.description+" Items: "+ Arrays.toString(newRoom.items));
+            currentRoomIndex++;
+            currentRoom = "coin";
+            saveWrite();
         } else {
             newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{});
             System.out.println(newRoom.description);
             changeHealth("damage",10);
+            currentRoomIndex++;
+            currentRoom = "trap";
+            saveWrite();
         }
     }
     public static void saveDelete(){
@@ -170,7 +187,7 @@ public static void saveWrite() {
     }
 
 
-    String newData = "health=" + health + " stamina=" + stamina;
+    String newData = "health=" + health + " stamina=" + stamina + " currentRoomIndex=" + currentRoomIndex + " currentRoom=" + currentRoom;
 
 
     if (!content.isEmpty()) {
@@ -192,21 +209,8 @@ public static void saveWrite() {
     }
 }
 
-    public static void saveRead(){
-        try {
-            File saveReader = new File("save.txt");
-            Scanner myReader = new Scanner(saveReader);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                System.out.println(data);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("DEBUG: An error occurred.");
-            e.printStackTrace();
-        }
-    }
-    public static void roomsList() throws IOException {
+
+    public static void saveRead() throws IOException {
         List<String> list = Files.readAllLines(new File("save.txt").toPath(), Charset.defaultCharset() );
 
         System.out.println(list);
