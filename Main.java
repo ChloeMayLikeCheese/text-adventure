@@ -21,9 +21,8 @@ public class Main {
         stamina = 100 + player.sta * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
-        for (int i = 0; i < 5; i++) {
-            roomGenerator();
-        }
+        System.out.println("Stamina: "+stamina);
+       roomGenerator();
         saveRead();
         //saveDelete();
 
@@ -107,10 +106,20 @@ public class Main {
             System.out.println("You healed " + change + " health!\nHealth: " + health);
             saveWrite();
         } else if (type.equalsIgnoreCase("damage")) {
-            dodge();
-            health -= change;
-            System.out.println("You took " + change + " damage!\nHealth: " + health);
-            saveWrite();
+            Scanner scannerIn = new Scanner(System.in);
+            System.out.println("Do you want to attempt a dodge? This will take stamina. (y/n)");
+            String in = scannerIn.next().toLowerCase();
+            if (in == "y"){
+                dodge();
+                stamina -= 5;
+                health -= change;
+                System.out.println("You took " + change + " damage!\nHealth: " + health);
+                saveWrite();
+            }else{
+                health -= change;
+                System.out.println("You took " + change + " damage!\nHealth: " + health);
+                saveWrite();
+            }
         }
     }
 
@@ -125,11 +134,13 @@ public class Main {
     public static void roomGenerator() {
         int randomRoom = (int) Math.ceil(Math.random() * 2);
         Room newRoom;
+
         if (randomRoom == 1) {
             newRoom = new Room("You found a coin", new Item[]{new Item("Coin")});
             System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
             currentRoomIndex++;
             currentRoom = "coin";
+            stamina -= 5;
             saveWrite();
         } else {
             newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{});
@@ -178,26 +189,11 @@ public class Main {
             e.printStackTrace();
         }
     }
-//        try {
-//            FileWriter saveWriter = new FileWriter("save.txt");
-//            saveWriter.append("health=").append(String.valueOf(health)).append(" stamina=").append(String.valueOf(stamina)).append(" currentRoomIndex=").append(String.valueOf(currentRoomIndex)).append(" currentRoom=").append(currentRoom).append("\n");
-//            saveWriter.close();
-//        } catch (IOException e) {
-//            System.out.println("An error occurred.");
-//            e.printStackTrace();
-//        }
 
 
     public static void saveRead() throws IOException {
-        List<String> list = Files.readAllLines(new File("save.txt").toPath(), Charset.defaultCharset());
-
-        System.out.println(list);
-//        Scanner in = new Scanner(new File("save.txt"));
-//        ArrayList<String> list = new ArrayList<String>();
-//        while (in.hasNext()){
-//            list.add(in.next());
-//        }
-//        in.close();
+        List<String> saveData = Files.readAllLines(new File("save.txt").toPath(), Charset.defaultCharset());
+        System.out.println("DEBUG: save data: "+saveData);
 
     }
 }
