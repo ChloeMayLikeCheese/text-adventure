@@ -9,12 +9,12 @@ public class Main {
     static int health;
     static Player player;
     static int stamina;
-    static int currentRoomIndex = 1;
-    static String currentRoom;
+    static int currentRoomIndex = -1;
+    static ArrayList <Room> rooms;
 
     public static void main(String[] args) throws IOException {
         saveCreate();
-
+        rooms = new ArrayList<>();
         player = new Player(0, 0, 0, 0);
         startSequence();
         health = 100 + player.con * 10;
@@ -23,7 +23,8 @@ public class Main {
         System.out.println("Health: " + health);
         System.out.println("Stamina: "+stamina);
        roomGenerator();
-        saveRead();
+       roomGenerator();
+       saveRead();
         //saveDelete();
 
     }
@@ -109,25 +110,28 @@ public class Main {
             Scanner scannerIn = new Scanner(System.in);
             System.out.println("Do you want to attempt a dodge? This will take stamina. (y/n)");
             String in = scannerIn.next().toLowerCase();
-            if (in == "y"){
-                dodge();
+            if (in.equals("y")){
                 stamina -= 5;
-                health -= change;
-                System.out.println("You took " + change + " damage!\nHealth: " + health);
-                saveWrite();
+                if (!dodge()) {
+                    health -= change;
+                    System.out.println("You took " + change + " damage!\nHealth: " + health);
+                }
             }else{
                 health -= change;
                 System.out.println("You took " + change + " damage!\nHealth: " + health);
-                saveWrite();
+
             }
         }
     }
 
 
-    public static void dodge() {
+    public static boolean dodge() {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
         if (dodgeChance <= player.dex) {
             System.out.println("You Dodged!");
+            return true;
+        }else {
+            return false;
         }
     }
 
@@ -136,18 +140,17 @@ public class Main {
         Room newRoom;
 
         if (randomRoom == 1) {
-            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")});
+            newRoom = new Room("You found a coin", new Item[]{new Item("coin")},"coin");
             System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
             currentRoomIndex++;
-            currentRoom = "coin";
-            stamina -= 5;
+            rooms.add(newRoom);
             saveWrite();
         } else {
-            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{});
+            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
             System.out.println(newRoom.description);
             changeHealth("damage", 10);
             currentRoomIndex++;
-            currentRoom = "trap";
+            rooms.add(newRoom);
             saveWrite();
         }
     }
@@ -168,6 +171,7 @@ public class Main {
                 System.out.println("DEBUG: Save created: " + saveCreator.getName());
             } else {
                 System.out.println("DEBUG: Save already exists.");
+                
             }
         } catch (IOException e) {
             System.out.println("DEBUG: An error occurred.");
@@ -177,12 +181,18 @@ public class Main {
 
     public static void saveWrite() {
         try {
-            FileWriter saveWriter = new FileWriter("save.txt", true); // 'true' for appending
-            saveWriter.append("health=").append(String.valueOf(health))
-                    .append(" stamina=").append(String.valueOf(stamina))
-                    .append(" currentRoomIndex=").append(String.valueOf(currentRoomIndex))
-                    .append(" currentRoom=").append(currentRoom)
+            FileWriter saveWriter = new FileWriter("save.txt", false);
+            saveWriter.append(String.valueOf(health))
+                    .append(",").append(String.valueOf(stamina))
+                    .append(",").append(String.valueOf(player.con))
+                    .append(",").append(String.valueOf(player.dex))
+                    .append(",").append(String.valueOf(player.sta))
+                    .append(",").append(String.valueOf(player.str))
+                    .append(",").append(String.valueOf(currentRoomIndex))
                     .append("\n");
+            for (int i = 0; i < rooms.size(); i++){
+                saveWriter.append(rooms.get(i).type).append("\n");
+            }
             saveWriter.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");
@@ -193,6 +203,25 @@ public class Main {
 
     public static void saveRead() throws IOException {
         List<String> saveData = Files.readAllLines(new File("save.txt").toPath(), Charset.defaultCharset());
+        rooms = new ArrayList<>();
+
+        String[] playerStats = saveData.get(0).split(",");
+        health = Integer.parseInt(playerStats[0]);
+        stamina = Integer.parseInt(playerStats[1]);
+        int con = Integer.parseInt(playerStats[2]);
+        int dex = Integer.parseInt(playerStats[3]);
+        int sta = Integer.parseInt(playerStats[4]);
+        int str = Integer.parseInt(playerStats[5]);
+        player = new Player(con,dex,sta,str);
+        currentRoomIndex = Integer.parseInt(playerStats[6]);
+
+        for (int i = 1; i < saveData.size(); i++){
+            if (saveData.get(i).equals("coin")){
+                rooms.add(new Room("It's an empty room",new Item[]{},"empty"));
+            }else if (saveData.get(i).equals("trap")){
+                rooms.add(new Room("It's an empty room with a broken trap",new Item[]{},"emptyTrap"));
+            }
+        }
         System.out.println("DEBUG: save data: "+saveData);
 
     }
