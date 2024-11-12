@@ -175,7 +175,7 @@ public class Main {
             rooms.add(newRoom);
             saveWrite();
         }else {
-            System.out.println("An Error Occurred");
+            System.out.println("DEBUG: An Error Occurred");
         }
     }
     public static void roomGeneratorDebug(int roomSpecific) {
@@ -206,7 +206,7 @@ public class Main {
             rooms.add(newRoom);
             saveWrite();
         } else {
-            System.out.println("Error: Room doesnt exist");
+            System.out.println("DEBUG: Error: Room doesnt exist");
         }
     }
 
@@ -258,7 +258,7 @@ public class Main {
             }
             saveWriter.close();
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("DEBUG: An error occurred.");
             e.printStackTrace();
         }
     }
