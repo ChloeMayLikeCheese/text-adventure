@@ -16,14 +16,17 @@ public class Main {
         saveCreate();
         rooms = new ArrayList<>();
         player = new Player(0, 0, 0, 0);
-        inventoryTest();
+        //inventoryTest();
         //startSequence();
+
         health = 100 + player.con * 10;
         stamina = 100 + player.sta * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
         System.out.println("Stamina: "+stamina);
-//       roomGenerator();
+
+        roomGeneratorDebug(2);
+        player.displayInventory();
 //       roomGenerator();
 //       saveRead();
 //       player.displayInventory();
@@ -145,20 +148,47 @@ public class Main {
         Room newRoom;
 
         if (randomRoom == 1) {
-            StackableItem coin = new StackableItem("coin", 1);
-            newRoom = new Room("You found a coin", new Item[]{new Item("coin")},"coin");
+            StackableItem coin = new StackableItem("Coin", 1);
+            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")},"Coin");
             System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
             player.editInventory(coin);
             currentRoomIndex++;
             rooms.add(newRoom);
             saveWrite();
         } else {
+            StackableItem scrapMetal = new StackableItem("Scrap Metal", 2);
             newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
             System.out.println(newRoom.description);
             changeHealth("damage", 10);
+            player.editInventory(scrapMetal);
             currentRoomIndex++;
             rooms.add(newRoom);
             saveWrite();
+        }
+    }
+    public static void roomGeneratorDebug(int roomSpecific) {
+        Room newRoom;
+
+        if (roomSpecific == 1) {
+            StackableItem coin = new StackableItem("Coin", 1);
+            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")},"Coin");
+            System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
+            player.editInventory(coin);
+            currentRoomIndex++;
+            rooms.add(newRoom);
+            saveWrite();
+        } else if (roomSpecific == 2){
+            StackableItem scrapMetal = new StackableItem("Scrap Metal", 2);
+            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
+            System.out.println(newRoom.description);
+            changeHealth("damage", 10);
+            player.editInventory(scrapMetal);
+            currentRoomIndex++;
+            rooms.add(newRoom);
+            saveWrite();
+        }
+        else {
+            System.out.println("Error: Room doesnt exist");
         }
     }
 
@@ -236,6 +266,8 @@ public class Main {
         player = new Player(0, 0, 0, 0);
         for (int i = 0; i < 100; i++) {
             player.editInventory(new StackableItem("Coin", 1));
+            StackableItem rawOnion = new StackableItem("raw onion",1);
+            player.editInventory(rawOnion);
 
         }
         player.editInventory(new Item("Sword"));
