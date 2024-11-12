@@ -16,16 +16,18 @@ public class Main {
         saveCreate();
         rooms = new ArrayList<>();
         player = new Player(0, 0, 0, 0);
-        startSequence();
+        inventoryTest();
+        //startSequence();
         health = 100 + player.con * 10;
         stamina = 100 + player.sta * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
         System.out.println("Stamina: "+stamina);
-       roomGenerator();
-       roomGenerator();
-       saveRead();
-        //saveDelete();
+//       roomGenerator();
+//       roomGenerator();
+//       saveRead();
+//       player.displayInventory();
+        saveDelete();
 
     }
 
@@ -95,6 +97,7 @@ public class Main {
 
                     break;
 
+
                 default:
                     System.out.println("Invalid input. Type 'tank' or 'rogue' to select a class.");
             }
@@ -102,6 +105,7 @@ public class Main {
     }
 
     public static void changeHealth(String type, int change) {
+
         if (type.equalsIgnoreCase("heal")) {
             health += change;
             System.out.println("You healed " + change + " health!\nHealth: " + health);
@@ -127,6 +131,7 @@ public class Main {
 
     public static boolean dodge() {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
+        System.out.println("DEBUG:"+dodgeChance);
         if (dodgeChance <= player.dex) {
             System.out.println("You Dodged!");
             return true;
@@ -140,8 +145,10 @@ public class Main {
         Room newRoom;
 
         if (randomRoom == 1) {
+            StackableItem coin = new StackableItem("coin", 1);
             newRoom = new Room("You found a coin", new Item[]{new Item("coin")},"coin");
             System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
+            player.editInventory(coin);
             currentRoomIndex++;
             rooms.add(newRoom);
             saveWrite();
@@ -224,6 +231,13 @@ public class Main {
         }
         System.out.println("DEBUG: save data: "+saveData);
 
+    }
+    public static void inventoryTest(){
+        player = new Player(0, 0, 0, 0);
+        for (int i = 0; i < 100; i++) {
+            player.editInventory(new StackableItem("coin", 1));
+        }
+        player.displayInventory();
     }
 }
 
