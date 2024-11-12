@@ -235,8 +235,10 @@ public class Main {
     public static void inventoryTest(){
         player = new Player(0, 0, 0, 0);
         for (int i = 0; i < 100; i++) {
-            player.editInventory(new StackableItem("coin", 1));
+            player.editInventory(new StackableItem("Coin", 1));
+
         }
+        player.editInventory(new Item("Sword"));
         player.displayInventory();
     }
 }
