@@ -8,6 +8,7 @@ import java.util.*;
 public class Main {
     static int health;
     static Player player;
+    static Enemy enemy;
     static int stamina;
     static int currentRoomIndex = -1;
     static ArrayList <Room> rooms;
@@ -16,8 +17,8 @@ public class Main {
         saveCreate();
         rooms = new ArrayList<>();
         player = new Player(0, 0, 0, 0);
-        //inventoryTest();
-        //startSequence();
+        enemy = new Enemy(100, Enemy.Attacks.SLASH);
+        startSequence();
 
         health = 100 + player.con * 10;
         stamina = 100 + player.sta * 10;
@@ -25,90 +26,22 @@ public class Main {
         System.out.println("Health: " + health);
         System.out.println("Stamina: "+stamina);
 
-        roomGeneratorDebug(1);
-        roomGeneratorDebug(2);
-        roomGeneratorDebug(3);
-        roomGeneratorDebug(1);
-        player.displayInventory();
+//        roomGeneratorDebug(1);
+//        roomGeneratorDebug(2);
+//        roomGeneratorDebug(1);
+//        roomGeneratorDebug(4);
+//
+//        player.consumeItem("Health Potion",1);
+//        player.displayInventory();
+
 //       roomGenerator();
-//       saveRead();
-//       player.displayInventory();
+       saveRead();
+
        // saveDelete();
 
     }
 
-    public static void startSequence() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        String startInput;
-        boolean running = true;
 
-        while (running) {
-            System.out.print("Welcome to the Blatant Biohazard Research Facility!\nType 'help' for instructions on how to play.\nClass options: Tank, Rogue\nPlease choose a class (or type 'info' for more information on each class): ");
-            startInput = scanner.next().toLowerCase();
-
-            switch (startInput) {
-                case "debug", "d":
-                    player.setStats(5, 5, 5, 5);
-                    running = false;
-                    break;
-
-                case "tank":
-                    player.setStats(5, 1, 2, 4);
-                    running = false;
-                    break;
-
-                case "rogue":
-                    player.setStats(1, 5, 4, 2);
-                    running = false;
-                    break;
-
-                case "info":
-                    System.out.println("Tank: High constitution and strength, but low dexterity and stamina. Meant to hit hard and withstand attacks\n" +
-                            "Rogue: High dexterity and stamina but low constitution and strength. Meant for quick, low damage attacks to chip away at an enemy's health.");
-                    break;
-                case "t":
-                    player.setStats(0, 0, 0, 0);
-                    running = false;
-                    break;
-                case "help":
-                    System.out.println("""
-                            How to play:
-                            Stats determine things that happen in the game.
-                            Con: More health per level.
-                            Dex: Higher dodge chance.
-                            Sta: More actions without resting.
-                            Str: Higher damage per level.
-                            Commands:
-                            Forward or f, moves you forward one room
-                            Back or b, moves you back one room
-                            Quit or q, quits the program""");
-                    break;
-                case "r", "read":
-                    saveRead();
-                    break;
-                case "q", "quit":
-                    System.out.print("Save? y/n: ");
-                    String yesno = scanner.next();
-                    if (Objects.equals(yesno, "n")) {
-                        System.out.println("Quitting without saving...");
-                        saveDelete();
-                        System.exit(0);
-                    } else {
-                        saveWrite();
-                        saveRead();
-                        System.out.println("Saved");
-                        System.exit(0);
-
-                    }
-
-                    break;
-
-
-                default:
-                    System.out.println("Invalid input. Type 'tank' or 'rogue' to select a class.");
-            }
-        }
-    }
 
     public static void changeHealth(String type, int change) {
 
@@ -168,9 +101,17 @@ public class Main {
             rooms.add(newRoom);
             saveWrite();
         } else if (randomRoom == 3) {
-            newRoom = new Room("It's a room with a sword",new Item[]{new Item("sword")},"sword");
+            newRoom = new Room("It's a room with a sword", new Item[]{new Item("sword")}, "sword");
             System.out.println(newRoom.description);
             player.editInventory(new Item("Sword"));
+            currentRoomIndex++;
+            rooms.add(newRoom);
+            saveWrite();
+        }else if (randomRoom == 4) {
+            StackableItem healthPotion = new StackableItem("Health Potion", 1);
+            newRoom = new Room("It's a room with a health potion",new Item[]{new Item("Health Potion")},"Health potion");
+            System.out.println(newRoom.description);
+            player.editInventory(healthPotion);
             currentRoomIndex++;
             rooms.add(newRoom);
             saveWrite();
@@ -199,13 +140,21 @@ public class Main {
             rooms.add(newRoom);
             saveWrite();
         } else if (roomSpecific == 3) {
-            newRoom = new Room("It's a room with a sword",new Item[]{new Item("sword")},"sword");
+            newRoom = new Room("It's a room with a sword", new Item[]{new Item("sword")}, "sword");
             System.out.println(newRoom.description);
             player.editInventory(new Item("Sword"));
             currentRoomIndex++;
             rooms.add(newRoom);
             saveWrite();
-        } else {
+        }else if (roomSpecific == 4) {
+            StackableItem healthPotion = new StackableItem("Health Potion", 1);
+            newRoom = new Room("It's a room with a health potion",new Item[]{new Item("Health Potion")},"Health potion");
+            System.out.println(newRoom.description);
+            player.editInventory(healthPotion);
+            currentRoomIndex++;
+            rooms.add(newRoom);
+            saveWrite();
+        }else {
             System.out.println("DEBUG: Error: Room doesnt exist");
         }
     }
@@ -307,15 +256,81 @@ public class Main {
         System.out.println("DEBUG: save data: "+saveData);
 
     }
-    public static void inventoryTest(){
-        player = new Player(0, 0, 0, 0);
 
-            player.editInventory(new StackableItem("Coin", 1));
-            StackableItem rawOnion = new StackableItem("raw onion",1);
-            player.editInventory(rawOnion);
 
-        player.editInventory(new Item("Sword"));
-        player.displayInventory();
+
+    public static void startSequence() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        String startInput;
+        boolean running = true;
+
+        while (running) {
+            System.out.print("Welcome to the Blatant Biohazard Research Facility!\nType 'help' for instructions on how to play.\nClass options: Tank, Rogue\nPlease choose a class (or type 'info' for more information on each class): ");
+            startInput = scanner.next().toLowerCase();
+
+            switch (startInput) {
+                case "debug", "d":
+                    player.setStats(5, 5, 5, 5);
+                    running = false;
+                    break;
+
+                case "tank":
+                    player.setStats(5, 1, 2, 4);
+                    running = false;
+                    break;
+
+                case "rogue":
+                    player.setStats(1, 5, 4, 2);
+                    running = false;
+                    break;
+
+                case "info":
+                    System.out.println("Tank: High constitution and strength, but low dexterity and stamina. Meant to hit hard and withstand attacks\n" +
+                            "Rogue: High dexterity and stamina but low constitution and strength. Meant for quick, low damage attacks to chip away at an enemy's health.");
+                    break;
+                case "t":
+                    player.setStats(0, 0, 0, 0);
+                    running = false;
+                    break;
+                case "help":
+                    System.out.println("""
+                            How to play:
+                            Stats determine things that happen in the game.
+                            Con: More health per level.
+                            Dex: Higher dodge chance.
+                            Sta: More actions without resting.
+                            Str: Higher damage per level.
+                            Commands:
+                            Forward or f, moves you forward one room
+                            Back or b, moves you back one room
+                            Quit or q, quits the program""");
+                    break;
+                case "r", "read":
+                    Main.saveRead();
+                    break;
+                case "q", "quit":
+                    System.out.print("Save? y/n: ");
+                    String yesno = scanner.next();
+                    if (Objects.equals(yesno, "n")) {
+                        System.out.println("Quitting without saving...");
+                        Main.saveDelete();
+                        System.exit(0);
+                    } else {
+                        Main.saveWrite();
+                        Main.saveRead();
+                        System.out.println("Saved");
+                        System.exit(0);
+
+                    }
+
+                    break;
+
+
+                default:
+                    System.out.println("Invalid input. Type 'tank' or   'rogue' to select a class.");
+            }
+        }
+
     }
 }
 
