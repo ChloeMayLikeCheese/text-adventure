@@ -17,27 +17,19 @@ public class Main {
         saveCreate();
         rooms = new ArrayList<>();
         player = new Player(0, 0, 0, 0);
-        enemy = new Enemy(100, Enemy.Attacks.SLASH);
         startSequence();
-
         health = 100 + player.con * 10;
         stamina = 100 + player.sta * 10;
         System.out.println("DEBUG: CON:" + player.con + " DEX:" + player.dex + " STA:" + player.sta + " STR:" + player.str);
         System.out.println("Health: " + health);
         System.out.println("Stamina: "+stamina);
 
-//        roomGeneratorDebug(1);
-//        roomGeneratorDebug(2);
-//        roomGeneratorDebug(1);
-//        roomGeneratorDebug(4);
-//
-//        player.consumeItem("Health Potion",1);
-//        player.displayInventory();
+        roomGeneratorDebug(5);
 
-//       roomGenerator();
+
+       saveWrite();
        saveRead();
-
-       // saveDelete();
+       saveDelete();
 
     }
 
@@ -72,9 +64,10 @@ public class Main {
         int dodgeChance = (int) Math.ceil(Math.random() * 10);
         System.out.println("DEBUG:"+dodgeChance);
         if (dodgeChance <= player.dex) {
-            System.out.println("You Dodged!");
+            System.out.println("You dodged!");
             return true;
         }else {
+            System.out.println("Your dodge failed!");
             return false;
         }
     }
@@ -83,79 +76,107 @@ public class Main {
         int randomRoom = (int) Math.ceil(Math.random() * 2);
         Room newRoom;
 
-        if (randomRoom == 1) {
-            StackableItem coin = new StackableItem("Coin", 1);
-            newRoom = new Room("You found a coin", new Item[]{new Item("Coin")},"Coin");
-            System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
-            player.editInventory(coin);
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        } else if (randomRoom == 2){
-            StackableItem scrapMetal = new StackableItem("Scrap Metal", 2);
-            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
-            System.out.println(newRoom.description);
-            changeHealth("damage", 10);
-            player.editInventory(scrapMetal);
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        } else if (randomRoom == 3) {
-            newRoom = new Room("It's a room with a sword", new Item[]{new Item("sword")}, "sword");
-            System.out.println(newRoom.description);
-            player.editInventory(new Item("Sword"));
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        }else if (randomRoom == 4) {
-            StackableItem healthPotion = new StackableItem("Health Potion", 1);
-            newRoom = new Room("It's a room with a health potion",new Item[]{new Item("Health Potion")},"Health potion");
-            System.out.println(newRoom.description);
-            player.editInventory(healthPotion);
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        }else {
-            System.out.println("DEBUG: An Error Occurred");
+        switch (randomRoom){
+            case 1:
+                StackableItem coin = new StackableItem("Coin", 1);
+                newRoom = new Room("You found a coin", new Item[]{new Item("coin")},"coin");
+                System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
+                player.editInventory(coin);
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 2:
+                StackableItem scrapMetal = new StackableItem("Scrap Metal", 2);
+                newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
+                System.out.println(newRoom.description);
+                changeHealth("damage", 10);
+                player.editInventory(scrapMetal);
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 3:
+                newRoom = new Room("It's a room with a sword", new Item[]{new Item("sword")}, "sword");
+                System.out.println(newRoom.description);
+                player.editInventory(new Item("Sword"));
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 4:
+                StackableItem healthPotion = new StackableItem("Health Potion", 1);
+                newRoom = new Room("It's a room with a health potion",new Item[]{new Item("Health Potion")},"Health potion");
+                System.out.println(newRoom.description);
+                player.editInventory(healthPotion);
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 5:
+                newRoom = new Room("Watch out! Its a zombie!", new Item[]{}, "zombie");
+                System.out.println(newRoom.description);
+                enemy = new Enemy(100, Enemy.Attacks.SLASH, Enemy.Attacks.PUNCH,"zombie");
+                enemy.enemyAction();
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            default:
+                System.out.println("DEBUG: Error: Room doesnt exist");
         }
     }
     public static void roomGeneratorDebug(int roomSpecific) {
         Room newRoom;
 
-        if (roomSpecific == 1) {
-            StackableItem coin = new StackableItem("Coin", 1);
-            newRoom = new Room("You found a coin", new Item[]{new Item("coin")},"coin");
-            System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
-            player.editInventory(coin);
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        } else if (roomSpecific == 2){
-            StackableItem scrapMetal = new StackableItem("Scrap Metal", 2);
-            newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
-            System.out.println(newRoom.description);
-            changeHealth("damage", 10);
-            player.editInventory(scrapMetal);
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        } else if (roomSpecific == 3) {
-            newRoom = new Room("It's a room with a sword", new Item[]{new Item("sword")}, "sword");
-            System.out.println(newRoom.description);
-            player.editInventory(new Item("Sword"));
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        }else if (roomSpecific == 4) {
-            StackableItem healthPotion = new StackableItem("Health Potion", 1);
-            newRoom = new Room("It's a room with a health potion",new Item[]{new Item("Health Potion")},"Health potion");
-            System.out.println(newRoom.description);
-            player.editInventory(healthPotion);
-            currentRoomIndex++;
-            rooms.add(newRoom);
-            saveWrite();
-        }else {
-            System.out.println("DEBUG: Error: Room doesnt exist");
+        switch (roomSpecific){
+            case 1:
+                StackableItem coin = new StackableItem("Coin", 1);
+                newRoom = new Room("You found a coin", new Item[]{new Item("coin")},"coin");
+                System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items));
+                player.editInventory(coin);
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 2:
+                StackableItem scrapMetal = new StackableItem("Scrap Metal", 2);
+                newRoom = new Room("Trap room! Watch out for the spikes!", new Item[]{},"trap");
+                System.out.println(newRoom.description);
+                changeHealth("damage", 10);
+                player.editInventory(scrapMetal);
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 3:
+                newRoom = new Room("It's a room with a sword", new Item[]{new Item("sword")}, "sword");
+                System.out.println(newRoom.description);
+                player.editInventory(new Item("Sword"));
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 4:
+                StackableItem healthPotion = new StackableItem("Health Potion", 1);
+                newRoom = new Room("It's a room with a health potion",new Item[]{new Item("Health Potion")},"Health potion");
+                System.out.println(newRoom.description);
+                player.editInventory(healthPotion);
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            case 5:
+                newRoom = new Room("Watch out! Its a zombie!", new Item[]{}, "zombie");
+                System.out.println(newRoom.description);
+                enemy = new Enemy(100, Enemy.Attacks.SLASH, Enemy.Attacks.PUNCH,"zombie");
+                enemy.enemyAction();
+                currentRoomIndex++;
+                rooms.add(newRoom);
+                saveWrite();
+                break;
+            default:
+                System.out.println("DEBUG: Error: Room doesnt exist");
         }
     }
 
@@ -285,8 +306,8 @@ public class Main {
                     break;
 
                 case "info":
-                    System.out.println("Tank: High constitution and strength, but low dexterity and stamina. Meant to hit hard and withstand attacks\n" +
-                            "Rogue: High dexterity and stamina but low constitution and strength. Meant for quick, low damage attacks to chip away at an enemy's health.");
+                    System.out.println("Tank: High constitution and strength, but low dexterity and stamina. Meant to hit hard and withstand attack\n" +
+                            "Rogue: High dexterity and stamina but low constitution and strength. Meant for quick, low damage attack to chip away at an enemy's health.");
                     break;
                 case "t":
                     player.setStats(0, 0, 0, 0);

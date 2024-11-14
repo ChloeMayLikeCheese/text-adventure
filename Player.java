@@ -52,7 +52,7 @@ public class Player {
         for (int i = 0; i < inventory.size(); i++) {
             Item item = inventory.get(i);
 
-            if (item.name.equals(itemName)) {
+            if (item.name.equals(itemName.toLowerCase())) {
                 if (item instanceof StackableItem) {
                     StackableItem stackableItem = (StackableItem) item;
                     if (stackableItem.quantity >= quantity) {
