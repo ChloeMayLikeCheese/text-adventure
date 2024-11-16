@@ -19,46 +19,40 @@ public class Enemy {
     public void enemyAction(){
         int actionRandom = (int) Math.ceil(Math.random() * 2);
         Attacks action = null;
-        boolean doAction = false;
         if (actionRandom == 1){
             action = attack;
-            doAction = true;
         }else if (actionRandom == 2){
             action = secondaryAttack;
-            doAction = true;
         }
-        while (doAction) {
             if (action == attack){
                 switch (attack){
-                    case SLASH -> {
+                    case SLASH:
                         System.out.println("The "+enemyType+" slashed at you!");
                         Main.changeHealth("damage",12);
-                        doAction = false;
-                    }
-                    case PUNCH -> {
+                        break;
+
+                    case PUNCH:
                         System.out.println("The "+enemyType+" attempted to punch you!");
                         Main.changeHealth("damage",7);
-                        doAction = false;
-                    }
+                        break;
 
                 }
             }else if (action == secondaryAttack){
                 switch (secondaryAttack){
-                    case SLASH -> {
+                    case SLASH:
                         System.out.println("The "+enemyType+" slashed at you!");
                         Main.changeHealth("damage",12);
-                        doAction = false;
-                    }
-                    case PUNCH -> {
+                        break;
+
+                    case PUNCH:
                         System.out.println("The "+enemyType+" attempted to punch you!");
                         Main.changeHealth("damage",7);
-                        doAction = false;
-                    }
+                        break;
 
                 }
             }
         }
-    }
+
     public enum Attacks{
         SLASH,
         PUNCH,
