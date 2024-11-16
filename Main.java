@@ -32,7 +32,6 @@ public class Main {
         if (type.equalsIgnoreCase("heal")) {
             health += change;
             System.out.println("You healed " + change + " health!\nHealth: " + health);
-            saveWrite();
         } else if (type.equalsIgnoreCase("damage")) {
             Scanner scannerIn = new Scanner(System.in);
             System.out.println("Do you want to attempt a dodge? This will take stamina. (y/n)");
