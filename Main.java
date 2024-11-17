@@ -121,7 +121,7 @@ public class Main {
                 System.out.println(newRoom.description);
                 newRoom.description = "It's a dead zombie";
                 // New enemy, set attacks, health and type
-                enemy = new Enemy(50, Enemy.Attacks.PUNCH, Enemy.Attacks.THROW_ROCK, "zombie");
+                enemy = new Enemy(25, Enemy.Attacks.PUNCH, Enemy.Attacks.THROW_ROCK, "zombie");
                 // Enter combat loop
                 combat();
                 break;
@@ -136,7 +136,7 @@ public class Main {
                 newRoom = new Room("Watch out! Its an armed zombie with a pistol!", new Item[]{}, "armed pistol zombie");
                 System.out.println(newRoom.description);
                 newRoom.description = "It's a dead zombie";
-                enemy = new Enemy(60, Enemy.Attacks.PISTOL, Enemy.Attacks.THROW_ROCK, "armed pistol zombie");
+                enemy = new Enemy(30, Enemy.Attacks.PISTOL, Enemy.Attacks.THROW_ROCK, "armed pistol zombie");
                 combat();
                 player.editInventory(new Item("pistol"));
                 break;
@@ -144,7 +144,7 @@ public class Main {
                 newRoom = new Room("Watch out! Its an armed zombie with a shotgun!", new Item[]{}, "armed shotgun zombie");
                 System.out.println(newRoom.description);
                 newRoom.description = "It's a dead zombie";
-                enemy = new Enemy(60, Enemy.Attacks.SHOTGUN, Enemy.Attacks.PUNCH, "armed shotgun zombie");
+                enemy = new Enemy(35, Enemy.Attacks.SHOTGUN, Enemy.Attacks.PUNCH, "armed shotgun zombie");
                 combat();
                 player.editInventory(new Item("shotgun"));
                 break;
