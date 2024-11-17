@@ -166,6 +166,7 @@ public class Main {
             default:
                 // Error if room doesn't exist
                 System.out.println("DEBUG: Error: Room doesnt exist");
+
         }
         // Adding new room to arraylist
         rooms.add(newRoom);
