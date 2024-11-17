@@ -108,8 +108,8 @@ public class Player {
                     System.out.println("You can't use that item.");
                 } else {
                     // Handle the use of different items
-                    if (itemName.equalsIgnoreCase("sword")) {
-                        System.out.println("You swing your sword!");
+                    if (itemName.equalsIgnoreCase("machete")) {
+                        System.out.println("You swing your machete!");
                         enemy.health -= 15 + str;  // Damage the enemy with sword+str for melee attacks
                     } else if (itemName.equalsIgnoreCase("pistol")) {
                         System.out.println("You shoot your pistol!");

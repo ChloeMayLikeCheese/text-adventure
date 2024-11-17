@@ -18,6 +18,8 @@ public class Main {
     static int exp;
     // Used for the final score count
     static int totalExp;
+    // For multiple uses
+    static StackableItem powerCore = new StackableItem("power core", 1);
     public static void main(String[] args) throws IOException {
         // Creating arraylist for rooms
         rooms = new ArrayList<>();
@@ -79,7 +81,7 @@ public class Main {
         int randomRoom;
         // Making sure two of the same rooms don't spawn in a row
         do {
-            randomRoom = (int) Math.ceil(Math.random() * 8);
+            randomRoom = (int) Math.ceil(Math.random() * 11);
         } while (randomRoom == lastRoomIndex);
 
         Room newRoom = null;
@@ -89,7 +91,6 @@ public class Main {
         switch (randomRoom) {
             case 1:
                 // New stackable item
-                StackableItem powerCore = new StackableItem("power core", 1);
                 newRoom = new Room("You found a power core", new Item[]{new Item("power core")}, "power core");
                 // Printing item quantity and description of room
                 System.out.println(newRoom.description + " Items: " + Arrays.toString(newRoom.items) + " x" + powerCore.quantity);
@@ -124,6 +125,7 @@ public class Main {
                 enemy = new Enemy(25, Enemy.Attacks.PUNCH, Enemy.Attacks.THROW_ROCK, "zombie");
                 // Enter combat loop
                 combat();
+                player.editInventory(powerCore);
                 break;
             case 6:
                 newRoom = new Room("Watch out! Its a giant rat!", new Item[]{}, "giant rat");
@@ -131,6 +133,7 @@ public class Main {
                 newRoom.description = "It's a dead rat";
                 enemy = new Enemy(20, Enemy.Attacks.CLAW, Enemy.Attacks.BITE, "giant rat");
                 combat();
+                player.editInventory(powerCore);
                 break;
             case 7:
                 newRoom = new Room("Watch out! Its an armed zombie with a pistol!", new Item[]{}, "armed pistol zombie");
@@ -139,6 +142,7 @@ public class Main {
                 enemy = new Enemy(30, Enemy.Attacks.PISTOL, Enemy.Attacks.THROW_ROCK, "armed pistol zombie");
                 combat();
                 player.editInventory(new Item("pistol"));
+                player.editInventory(powerCore);
                 break;
             case 8:
                 newRoom = new Room("Watch out! Its an armed zombie with a shotgun!", new Item[]{}, "armed shotgun zombie");
@@ -147,6 +151,7 @@ public class Main {
                 enemy = new Enemy(35, Enemy.Attacks.SHOTGUN, Enemy.Attacks.PUNCH, "armed shotgun zombie");
                 combat();
                 player.editInventory(new Item("shotgun"));
+                player.editInventory(powerCore);
                 break;
             case 9:
                 newRoom = new Room("It's a glowing orb.",new Item[]{},"glowing orb");
@@ -162,6 +167,24 @@ public class Main {
                     enemy = new Enemy(1,Enemy.Attacks.EXPLOSION,null,"orb creature");
                     combat();
                 }
+                break;
+            case 10:
+                newRoom = new Room("Watch out! Its an armed zombie with a club!", new Item[]{}, "armed club zombie");
+                System.out.println(newRoom.description);
+                newRoom.description = "It's a dead zombie";
+                enemy = new Enemy(35, Enemy.Attacks.CLUB, Enemy.Attacks.THROW_ROCK, "armed club zombie");
+                combat();
+                player.editInventory(new Item("club"));
+                player.editInventory(powerCore);
+                break;
+            case 11:
+                newRoom = new Room("Watch out! Its an armed zombie with a machete!", new Item[]{}, "armed machete zombie");
+                System.out.println(newRoom.description);
+                newRoom.description = "It's a dead zombie";
+                enemy = new Enemy(35, Enemy.Attacks.SLASH, Enemy.Attacks.THROW_ROCK, "armed machete zombie");
+                combat();
+                player.editInventory(new Item("machete"));
+                player.editInventory(powerCore);
                 break;
             default:
                 // Error if room doesn't exist
@@ -188,8 +211,9 @@ public class Main {
                 The Gray Mesa Research Facility is a bioengineering testing facility located of Desert road, Ruapehu, Aotearoa.
                 It is your mission to enter the facility and collect as many power cores as possible.
                 if you see any anomalies, purge immediately.
-                You lose when either your health or stamina gets to zero""");
-        // Handle exiting
+                You lose when either your health or stamina gets to zero.
+                You get exp to level up from defeating enemies.""");
+        // To handle exiting the loop
         while (running) {
             System.out.print("Type \"help\" for instructions on how to play.\nClass options: Tank, Rogue\nPlease choose a class (or type 'info' for more information on each class): ");
             startInput = scanner.nextLine().toLowerCase();
@@ -226,7 +250,8 @@ public class Main {
                             move forward, forward or f: moves you forward one room
                             move back, back or b: moves you back one room
                             display stats: displays health, stamina and all of your other stats
-                            level up: levels you up if you have enough exp""");
+                            level up: levels you up if you have enough exp
+                            ammo: consumes one scrap metal for 5 ammo""");
                     break;
                 // Quitting
                 case "q", "quit":
@@ -380,7 +405,7 @@ public class Main {
     // Handling player turn
     // Pikachu i choose you!
     public static void playerTurn(){
-        Scanner combatScanner = new Scanner(System.in);
+        Scanner combatScanner = new Scanner(System.in);player.editInventory(powerCore);
             System.out.println("Ammo: " + player.ammo);
             System.out.print("What would you like to do? (Type \"help\" for help): ");
             String combatIn = combatScanner.nextLine().toLowerCase();
@@ -401,18 +426,23 @@ public class Main {
                     switch (attackObject) {
                         case "1", "crowbar":
                             player.useItem("crowbar");
+                            stamina -= 2;
                             break;
                         case "2", "sword":
                             player.useItem("sword");
+                            stamina -= 2;
                             break;
                         case "3", "pistol":
                             player.useItem("pistol");
+                            stamina -= 2;
                             break;
                         case "4", "shotgun":
                             player.useItem("shotgun");
+                            stamina -= 2;
                             break;
                         case "5", "debug":
                             player.useItem("debug");
+                            stamina -= 2;
                             break;
                         default:
                             // Couldnt figure out how to do non recursive things for returning
@@ -472,12 +502,15 @@ public class Main {
                     switch (attackObject) {
                         case "1", "crowbar":
                             player.useItem("crowbar");
+                            stamina -= 2;
                             break;
                         case "2", "sword":
                             player.useItem("sword");
+                            stamina -= 2;
                             break;
                         case "5", "debug":
                             player.useItem("debug");
+                            stamina -= 2;
                             break;
                         default:
                             System.out.println("Invalid attack choice.");
