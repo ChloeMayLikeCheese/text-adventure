@@ -10,7 +10,7 @@ public class Player {
     int dex;
     int sta;
     int str;
-    static int ammo = 0;  // Ammo count (static because shared by all instances)
+    static int ammo = 50;  // Ammo count (static because shared by all instances)
     ArrayList<Item> inventory;  // Inventory to store items
 
     // Constructor to initialize the player's stats and inventory
